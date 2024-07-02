@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: express
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT
+    volumes:
+      - ./index.js:/app/index.js
+      - ./src:/app/src
+    depends_on:
+      - database
+
+  database:
+    container_name: database
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - db_data:/var/lib/postgressql/data
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      - database
+
+volumes:
+  db_data:
